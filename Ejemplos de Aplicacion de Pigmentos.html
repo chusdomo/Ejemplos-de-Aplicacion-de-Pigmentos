@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ejemplos de Aplicación de Pigmentos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8f8f8;
+      color: #333;
+      font-size: 1.2em;
+    }
+    header {
+      background: #4a90e2;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-weight: bold;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+    }
+    .list-screen, .detail-screen {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .example-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.5rem;
+    }
+    .example-list button {
+      padding: 0.8rem;
+      font-size: 0.9rem;
+      background: white;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      text-align: left;
+      transition: background 0.3s;
+      cursor: pointer;
+    }
+    .example-list button:hover {
+      background: #e6f0ff;
+    }
+    .back-button {
+      margin-top: 1rem;
+      padding: 0.8rem;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    @media (min-width: 600px) {
+      .container {
+        max-width: 800px;
+        margin: auto;
+      }
+      .example-list {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>Ejemplos de Aplicación de Pigmentos</header>
+  <div class="container">
+    <div id="listScreen" class="list-screen active">
+      <div class="example-list" id="exampleList"></div>
+    </div>
+    <div id="detailScreen" class="detail-screen">
+      <div id="detailContent"></div>
+      <button class="back-button" onclick="goBack()">← Volver a la lista</button>
+    </div>
+  </div>
+
+  <script>
+    const ejemplos = [
+      {
+        nombre: "Barro seco",
+        material: "Terreno arcilloso",
+        mezcla: "40% amarillo + 10% rojo + 30% blanco + 20% negro",
+        tecnica: "Pincel seco",
+        pasos: "Aplicar base marrón claro, dejar secar. Dar pincel seco con la mezcla en capas sucesivas hasta lograr textura seca.",
+        consejos: "Usa pincel de cerda dura. Deja irregularidades para más realismo."
+      },
+      {
+        nombre: "Barro húmedo oscuro",
+        material: "Terreno húmedo",
+        mezcla: "30% amarillo + 15% rojo + 35% negro + 20% barniz satinado",
+        tecnica: "Salpicado y pincel húmedo",
+        pasos: "Salpicar la mezcla en zonas seleccionadas y dar pincel húmedo para efecto barro fresco.",
+        consejos: "No sobrecargar la mezcla para evitar manchas excesivas."
+      },
+      {
+        nombre: "Cemento envejecido",
+        material: "Superficies de cemento",
+        mezcla: "65% blanco + 25% negro + 8% amarillo + 2% rojo",
+        tecnica: "Esponjado y arrastre",
+        pasos: "Aplicar base gris, luego esponjar con mezcla y arrastrar con pincel seco.",
+        consejos: "Mezclar con agua para ajustar opacidad y conseguir texturas variadas."
+      },
+      {
+        nombre: "Grasa de motor",
+        material: "Partes mecánicas",
+        mezcla: "50% negro + 20% amarillo + 10% rojo + 20% barniz brillante",
+        tecnica: "Pincel fino",
+        pasos: "Aplicar en juntas y válvulas con pincel fino para simular manchas de grasa fresca.",
+        consejos: "Aplicar varias capas finas para profundidad."
+      },
+      {
+        nombre: "Hollín reciente",
+        material: "Superficies metálicas",
+        mezcla: "70% negro + 15% azul + 10% amarillo + 5% rojo",
+        tecnica: "Difuminado en seco",
+        pasos: "Aplicar pigmento con pincel blando en zonas elevadas y acumuladas.",
+        consejos: "Evitar fijador para mantener el aspecto suelto."
+      },
+      {
+        nombre: "Moho blanco",
+        material: "Madera húmeda",
+        mezcla: "85% blanco + 15% azul",
+        tecnica: "Punteado suave",
+        pasos: "Aplicar en esquinas húmedas y zonas de madera putrefacta.",
+        consejos: "Usar pincel pequeño para aplicar manchas sutiles."
+      },
+      {
+        nombre: "Moho verdoso",
+        material: "Madera y muros húmedos",
+        mezcla: "40% amarillo + 20% azul + 20% negro + 20% blanco",
+        tecnica: "Esponjado y veladuras",
+        pasos: "Golpear suavemente con esponja húmeda para efecto irregular.",
+        consejos: "Superponer tonos claros para más volumen."
+      },
+      {
+        nombre: "Óxido marrón seco",
+        material: "Estructuras metálicas viejas",
+        mezcla: "40% amarillo + 30% rojo + 20% negro + 10% blanco",
+        tecnica: "Pincel seco",
+        pasos: "Aplicar pigmento en bordes y juntas para simular óxido seco.",
+        consejos: "Usar pincel de cerdas duras para textura."
+      },
+      {
+        nombre: "Óxido metálico rojizo",
+        material: "Metal ferroviario",
+        mezcla: "50% rojo + 20% amarillo + 20% negro + 10% blanco",
+        tecnica: "Esponjado y veladuras",
+        pasos: "Aplicar pigmento en zonas de acumulación de agua.",
+        consejos: "Dejar secar entre capas para evitar mezclas no deseadas."
+      },
+      {
+        nombre: "Óxido naranja quemado",
+        material: "Superficies metálicas",
+        mezcla: "35% rojo + 15% amarillo + 30% negro + 20% blanco",
+        tecnica: "Aerografía en capas suaves",
+        pasos: "Aplicar en capas finas para crear profundidad y textura.",
+        consejos: "Evitar saturación excesiva para no perder detalle."
+      },
+      {
+        nombre: "Óxido seco grisáceo",
+        material: "Metales envejecidos",
+        mezcla: "50% blanco + 30% negro + 20% amarillo",
+        tecnica: "Pincel seco y esponjado",
+        pasos: "Aplicar pigmento en bordes y zonas de desgaste.",
+        consejos: "Usar pincel seco para evitar exceso de pigmento."
+      },
+      {
+        nombre: "Óxido suave rojizo",
+        material: "Estructuras metálicas",
+        mezcla: "50% rojo + 30% blanco + 15% amarillo + 5% negro",
+        tecnica: "Veladura suave",
+        pasos: "Aplicar pigmento en varias capas delgadas para crear efecto sutil.",
+        consejos: "Dejar secar bien entre capas."
+      },
+      {
+        nombre: "Polvo urbano grisáceo",
+        material: "Superficies urbanas",
+        mezcla: "60% blanco + 20% negro + 15% amarillo + 5% rojo",
+        tecnica: "Veladuras y barrido",
+        pasos: "Aplicar en bordes, esquinas y zonas bajas.",
+        consejos: "Usar pincel suave para barrer el polvo y evitar manchas."
+      },
+      {
+        nombre: "Sombra de hollín",
+        material: "Tuberías y escapes",
+        mezcla: "80% negro + 20% azul",
+        tecnica: "Aerografía o pincel seco",
+        pasos: "Aplicar en zonas de escapes y válvulas.",
+        consejos: "Variar intensidad para simular acumulación."
+      },
+      {
+        nombre: "Tierra polvorienta",
+        material: "Suelos y caminos",
+        mezcla: "50% amarillo + 20% blanco + 15% rojo + 15% negro",
+        tecnica: "Esponjado y pincel seco",
+        pasos: "Aplicar en capas para simular polvo acumulado.",
+        consejos: "Añadir textura con arena fina para realismo."
+      },
+      {
+        nombre: "Óxido verde azulado",
+        material: "Metales envejecidos",
+        mezcla: "30% azul + 30% amarillo + 30% blanco + 10% negro",
+        tecnica: "Veladuras y pincel seco",
+        pasos: "Aplicar en zonas de humedad para simular corrosión.",
+        consejos: "Dejar secar bien entre capas."
+      },
+      {
+        nombre: "Óxido oscuro marrón",
+        material: "Superficies metálicas envejecidas",
+        mezcla: "25% amarillo + 25% rojo + 40% negro + 10% blanco",
+        tecnica: "Pincel seco y esponjado",
+        pasos: "Aplicar en bordes y zonas de desgaste para efecto realista.",
+        consejos: "No aplicar demasiada cantidad para evitar saturación."
+      },
+      {
+        nombre: "Moho blanco seco",
+        material: "Superficies de madera envejecida",
+        mezcla: "70% blanco + 15% azul + 10% amarillo + 5% rojo",
+        tecnica: "Punteado suave y pincel seco",
+        pasos: "Aplicar en zonas sombreadas y esquinas.",
+        consejos: "Superponer varias capas para profundidad."
+      },
+      {
+        nombre: "Barro claro húmedo",
+        material: "Terreno húmedo",
+        mezcla: "40% amarillo + 30% blanco + 15% rojo + 15% negro",
+        tecnica: "Pincel húmedo y textura",
+        pasos: "Aplicar en zonas húmedas y caminos.",
+        consejos: "Agregar barniz satinado para simular humedad."
+      },
+      {
+        nombre: "Grasa fresca",
+        material: "Partes mecánicas",
+        mezcla: "40% negro + 25% amarillo + 15% rojo + 20% barniz brillante",
+        tecnica: "Pincel fino y capas",
+        pasos: "Aplicar en juntas y válvulas para simular grasa fresca.",
+        consejos: "Variar la intensidad para mayor realismo."
+      },
+      {
+        nombre: "Moho oscuro húmedo",
+        material: "Muros y techos",
+        mezcla: "30% amarillo + 30% azul + 20% negro + 20% rojo",
+        tecnica: "Esponjado y veladuras",
+        pasos: "Aplicar en zonas de humedad y sombra.",
+        consejos: "Evitar exceso para no saturar la superficie."
+      },
+      {
+        nombre: "Polvo fino grisáceo",
+        material: "Superficies urbanas",
+        mezcla: "60% blanco + 25% negro + 15% amarillo",
+        tecnica: "Veladuras y barrido suave",
+        pasos: "Aplicar en bordes y esquinas para simular polvo.",
+        consejos: "Usar pincel suave para evitar acumulaciones."
+      },
+      {
+        nombre: "Óxido suave naranja",
+        material: "Estructuras metálicas",
+        mezcla: "40% rojo + 20% amarillo + 30% blanco + 10% negro",
+        tecnica: "Veladura y pincel seco",
+        pasos: "Aplicar pigmento en capas finas y superpuestas.",
+        consejos: "Dejar secar entre capas para efecto realista."
+      },
+      {
+        nombre: "Óxido verde brillante",
+        material: "Metales con humedad",
+        mezcla: "35% amarillo + 35% azul + 20% blanco + 10% negro",
+        tecnica: "Veladuras y pincel fino",
+        pasos: "Aplicar en zonas húmedas para simular óxido fresco.",
+        consejos: "No saturar la mezcla para evitar manchas."
+      },
+      {
+        nombre: "Sombra seca marrón",
+        material: "Superficies de madera y metal",
+        mezcla: "25% amarillo + 25% rojo + 40% negro + 10% blanco",
+        tecnica: "Pincel seco",
+        pasos: "Aplicar en bordes y zonas de desgaste.",
+        consejos: "Usar pincel de cerda dura para textura."
+      },
+      {
+        nombre: "Tierra seca clara",
+        material: "Suelos y caminos",
+        mezcla: "60% blanco + 20% amarillo + 15% rojo + 5% negro",
+        tecnica: "Esponjado y pincel seco",
+        pasos: "Aplicar en capas para simular tierra seca y polvorienta.",
+        consejos: "Superponer capas para más volumen."
+      },
+      {
+        nombre: "Óxido azul verdoso",
+        material: "Metales envejecidos",
+        mezcla: "35% azul + 25% amarillo + 30% blanco + 10% negro",
+        tecnica: "Veladuras y pincel seco",
+        pasos: "Aplicar en zonas de corrosión y humedad.",
+        consejos: "Dejar secar bien entre capas."
+      },
+      {
+        nombre: "Moho blanco húmedo",
+        material: "Superficies húmedas",
+        mezcla: "75% blanco + 15% azul + 8% amarillo + 2% rojo",
+        tecnica: "Punteado y veladuras suaves",
+        pasos: "Aplicar en zonas húmedas para simular moho reciente.",
+        consejos: "Usar pincel fino para detalles."
+      },
+      {
+        nombre: "Barro oscuro seco",
+        material: "Terreno arcilloso",
+        mezcla: "30% amarillo + 20% rojo + 40% negro + 10% blanco",
+        tecnica: "Pincel seco y esponjado",
+        pasos: "Aplicar en zonas de barro seco y agrietado.",
+        consejos: "Dejar texturas irregulares para realismo."
+      },
+      {
+        nombre: "Grasa vieja",
+        material: "Partes mecánicas oxidadas",
+        mezcla: "50% negro + 25% amarillo + 15% rojo + 10% barniz mate",
+        tecnica: "Pincel fino y capas múltiples",
+        pasos: "Aplicar en zonas de grasa antigua y seca.",
+        consejos: "Variar tonalidades para simular acumulación."
+      },
+      {
+        nombre: "Hollín acumulado",
+        material: "Superficies metálicas y chimeneas",
+        mezcla: "70% negro + 20% azul + 10% amarillo",
+        tecnica: "Pincel seco y veladuras",
+        pasos: "Aplicar en capas finas acumuladas.",
+        consejos: "Superponer para profundidad."
+      },
+      {
+        nombre: "Moho verdoso seco",
+        material: "Madera envejecida",
+        mezcla: "30% amarillo + 30% azul + 20% negro + 20% blanco",
+        tecnica: "Punteado y pincel seco",
+        pasos: "Aplicar en zonas secas y esquinas.",
+        consejos: "Superponer capas para volumen."
+      },
+      {
+        nombre: "Óxido anaranjado intenso",
+        material: "Metales oxidados",
+        mezcla: "45% rojo + 25% amarillo + 20% negro + 10% blanco",
+        tecnica: "Pincel seco y esponjado",
+        pasos: "Aplicar en zonas de corrosión avanzada.",
+        consejos: "Variar intensidad para realismo."
+      },
+      {
+        nombre: "Polvo oscuro",
+        material: "Superficies urbanas",
+        mezcla: "40% negro + 20% amarillo + 20% blanco + 20% rojo",
+        tecnica: "Veladuras y barrido suave",
+        pasos: "Aplicar en zonas bajas y esquinas.",
+        consejos: "Evitar acumulación excesiva."
+      },
+      {
+        nombre: "Sombra clara húmeda",
+        material: "Madera y superficies húmedas",
+        mezcla: "50% blanco + 20% amarillo + 20% azul + 10% negro",
+        tecnica: "Veladura suave",
+        pasos: "Aplicar en zonas húmedas para simular sombra clara.",
+        consejos: "Dejar secar bien entre capas."
+      },
+      {
+        nombre: "Tierra mojada",
+        material: "Suelos y terrenos húmedos",
+        mezcla: "30% amarillo + 20% rojo + 40% negro + 10% barniz satinado",
+        tecnica: "Pincel húmedo y salpicado",
+        pasos: "Aplicar en zonas mojadas para simular humedad.",
+        consejos: "Evitar saturación excesiva."
+      },
+      {
+        nombre: "Óxido rojo intenso",
+        material: "Metales oxidados",
+        mezcla: "60% rojo + 20% amarillo + 15% negro + 5% blanco",
+        tecnica: "Pincel seco y veladuras",
+        pasos: "Aplicar en zonas de óxido intenso.",
+        consejos: "Superponer capas para profundidad."
+      },
+      {
+        nombre: "Óxido verdoso suave",
+        material: "Metales envejecidos",
+        mezcla: "30% amarillo + 30% azul + 30% blanco + 10% negro",
+        tecnica: "Veladuras y pincel fino",
+        pasos: "Aplicar en zonas húmedas para simular óxido suave.",
+        consejos: "Dejar secar bien."
+      },
+      {
+        nombre: "Barro rojizo húmedo",
+        material: "Terreno arcilloso húmedo",
+        mezcla: "40% rojo + 20% amarillo + 30% negro + 10% barniz satinado",
+        tecnica: "Pincel húmedo y salpicado",
+        pasos: "Aplicar en zonas húmedas y caminos.",
+        consejos: "Dejar secar bien."
+      },
+      {
+        nombre: "Grasa negra",
+        material: "Partes mecánicas",
+        mezcla: "60% negro + 20% amarillo + 10% rojo + 10% barniz brillante",
+        tecnica: "Pincel fino",
+        pasos: "Aplicar en juntas y válvulas para simular grasa fresca.",
+        consejos: "Variar capas para mayor realismo."
+      },
+      {
+        nombre: "Hollín viejo",
+        material: "Superficies metálicas oxidadas",
+        mezcla: "60% negro + 20% amarillo + 15% azul + 5% rojo",
+        tecnica: "Pincel seco y veladuras",
+        pasos: "Aplicar en capas acumuladas para simular hollín viejo.",
+        consejos: "Superponer para profundidad."
+      },
+      {
+        nombre: "Moho azul claro",
+        material: "Superficies húmedas y madera",
+        mezcla: "60% azul + 30% blanco + 8% amarillo + 2% rojo",
+        tecnica: "Punteado y veladuras suaves",
+        pasos: "Aplicar en zonas húmedas y sombreadas.",
+        consejos: "Usar pincel fino para detalles."
+      },
+      {
+        nombre: "Polvo claro",
+        material: "Superficies urbanas y rurales",
+        mezcla: "70% blanco + 15% amarillo + 10% rojo + 5% negro",
+        tecnica: "Veladuras suaves y barrido",
+        pasos: "Aplicar en bordes y zonas elevadas.",
+        consejos: "Evitar acumulación excesiva."
+      },
+      {
+        nombre: "Sombra oscura seca",
+        material: "Superficies metálicas y madera",
+        mezcla: "50% negro + 20% amarillo + 20% rojo + 10% blanco",
+        tecnica: "Pincel seco",
+        pasos: "Aplicar en bordes y zonas de desgaste.",
+        consejos: "Usar pincel de cerda dura para textura."
+      },
+      {
+        nombre: "Tierra clara seca",
+        material: "Suelos y terrenos secos",
+        mezcla: "65% blanco + 20% amarillo + 10% rojo + 5% negro",
+        tecnica: "Esponjado y pincel seco",
+        pasos: "Aplicar en capas para simular tierra clara y polvorienta.",
+        consejos: "Superponer capas para volumen."
+      },
+      {
+        nombre: "Óxido rojo claro",
+        material: "Metales oxidados",
+        mezcla: "50% rojo + 30% blanco + 15% amarillo + 5% negro",
+        tecnica: "Veladuras y pincel seco",
+        pasos: "Aplicar en capas para crear efecto suave.",
+        consejos: "Dejar secar entre capas."
+      },
+      {
+        nombre: "Óxido verde oscuro",
+        material: "Metales envejecidos y húmedos",
+        mezcla: "25% amarillo + 25% azul + 35% negro + 15% blanco",
+        tecnica: "Pincel seco y esponjado",
+        pasos: "Aplicar en zonas de corrosión avanzada.",
+        consejos: "Dejar secar bien entre capas."
+      },
+      {
+        nombre: "Barro claro seco",
+        material: "Terreno seco y polvoriento",
+        mezcla: "45% amarillo + 25% blanco + 20% rojo + 10% negro",
+        tecnica: "Pincel seco",
+        pasos: "Aplicar en capas para simular barro seco y polvoriento.",
+        consejos: "Superponer para textura."
+      },
+      {
+        nombre: "Grasa sucia",
+        material: "Partes mecánicas",
+        mezcla: "50% negro + 25% amarillo + 15% rojo + 10% barniz mate",
+        tecnica: "Pincel fino y capas múltiples",
+        pasos: "Aplicar en zonas sucias y grasientas.",
+        consejos: "Variar tonalidades para realismo."
+      },
+      {
+        nombre: "Hollín negro fresco",
+        material: "Superficies metálicas y chimeneas",
+        mezcla: "80% negro + 20% azul",
+        tecnica: "Aerografía y pincel seco",
+        pasos: "Aplicar en capas finas y difuminadas.",
+        consejos: "Variar intensidad para efecto realista."
+      },
+      {
+        nombre: "Moho verdoso claro",
+        material: "Madera y muros húmedos",
+        mezcla: "35% amarillo + 35% azul + 20% blanco + 10% negro",
+        tecnica: "Esponjado suave y veladuras",
+        pasos: "Aplicar en zonas húmedas y sombreadas.",
+        consejos: "Superponer capas para volumen."
+      },
+      {
+        nombre: "Polvo gris oscuro",
+        material: "Superficies urbanas",
+        mezcla: "40% negro + 30% blanco + 20% amarillo + 10% rojo",
+        tecnica: "Veladuras y barrido suave",
+        pasos: "Aplicar en bordes y zonas bajas.",
+        consejos: "Evitar acumulaciones excesivas."
+      },
+      {
+        nombre: "Sombra clara seca",
+        material: "Superficies metálicas y madera",
+        mezcla: "60% blanco + 20% amarillo + 15% rojo + 5% negro",
+        tecnica: "Pincel seco y esponjado",
+        pasos: "Aplicar en bordes y zonas elevadas.",
+        consejos: "Superponer capas para volumen."
+      },
+      {
+        nombre: "Tierra húmeda oscura",
+        material: "Suelos y terrenos húmedos",
+        mezcla: "25% amarillo + 25% negro + 40% rojo + 10% barniz satinado",
+        tecnica: "Pincel húmedo y salpicado",
+        pasos: "Aplicar en zonas húmedas para simular barro fresco.",
+        consejos: "No saturar para evitar manchas."
+      },
+      {
+        nombre: "Óxido rojo oscuro",
+        material: "Metales oxidados",
+        mezcla: "50% rojo + 15% amarillo + 25% negro + 10% blanco",
+        tecnica: "Pincel seco y esponjado",
+        pasos: "Aplicar en bordes y zonas de corrosión.",
+        consejos: "Dejar secar bien entre capas."
+      },
+      {
+        nombre: "Óxido verde seco",
+        material: "Metales envejecidos",
+        mezcla: "30% amarillo + 30% azul + 25% blanco + 15% negro",
+        tecnica: "Pincel seco y esponjado",
+        pasos: "Aplicar en zonas de corrosión avanzada.",
+        consejos: "Evitar exceso para realismo."
+      },
+      {
+        nombre: "Barro rojo húmedo",
+        material: "Terreno arcilloso húmedo",
+        mezcla: "40% rojo + 20% amarillo + 30% negro + 10% barniz satinado",
+        tecnica: "Pincel húmedo y salpicado",
+        pasos: "Aplicar en zonas húmedas y caminos.",
+        consejos: "Dejar secar bien."
+      },
+      {
+        nombre: "Grasa vieja oscura",
+        material: "Partes mecánicas oxidadas",
+        mezcla: "50% negro + 25% amarillo + 15% rojo + 10% barniz mate",
+        tecnica: "Pincel fino y capas múltiples",
+        pasos: "Aplicar en zonas de grasa antigua y seca.",
+        consejos: "Variar tonalidades para simular acumulación."
+      },
+      {
+        nombre: "Hollín acumulado antiguo",
+        material: "Superficies metálicas y chimeneas",
+        mezcla: "70% negro + 20% azul + 10% amarillo",
+        tecnica: "Pincel seco y veladuras",
+        pasos: "Aplicar en capas finas acumuladas.",
+        consejos: "Superponer para profundidad."
+      },
+      {
+        nombre: "Moho azul pálido",
+        material: "Superficies húmedas y madera",
+        mezcla: "60% azul + 30% blanco + 8% amarillo + 2% rojo",
+        tecnica: "Punteado y veladuras suaves",
+        pasos: "Aplicar en zonas húmedas y sombreadas.",
+        consejos: "Usar pincel fino para detalles."
+      },
+      {
+        nombre: "Polvo claro grisáceo",
+        material: "Superficies urbanas y rurales",
+        mezcla: "70% blanco + 15% amarillo + 10% rojo + 5% negro",
+        tecnica: "Veladuras suaves y barrido",
+        pasos: "Aplicar en bordes y zonas elevadas.",
+        consejos: "Evitar acumulación excesiva."
+      }
+    ];
+
+    ejemplos.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    const listContainer = document.getElementById("exampleList");
+    const detailScreen = document.getElementById("detailScreen");
+    const listScreen = document.getElementById("listScreen");
+    const detailContent = document.getElementById("detailContent");
+
+    ejemplos.forEach((ejemplo, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = ejemplo.nombre;
+      btn.onclick = () => showDetails(index);
+      listContainer.appendChild(btn);
+    });
+
+    function showDetails(index) {
+      const ejemplo = ejemplos[index];
+      detailContent.innerHTML = `
+        <h2>${ejemplo.nombre}</h2>
+        <p><strong>Material:</strong> ${ejemplo.material}</p>
+        <p><strong>Mezcla:</strong> ${ejemplo.mezcla}</p>
+        <p><strong>Técnica aplicada:</strong> ${ejemplo.tecnica}</p>
+        <p><strong>Pasos:</strong> ${ejemplo.pasos}</p>
+        <p><strong>Consejos técnicos:</strong> ${ejemplo.consejos}</p>
+      `;
+      listScreen.classList.remove("active");
+      detailScreen.classList.add("active");
+    }
+
+    function goBack() {
+      detailScreen.classList.remove("active");
+      listScreen.classList.add("active");
+    }
+  </script>
+</body>
+</html>
